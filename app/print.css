@@ -1,0 +1,149 @@
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 1cm;
+    }
+
+    body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        background-color: white;
+        font-size: 10pt;
+        /* Slightly smaller font for print */
+    }
+
+    /* Hide non-printable elements */
+    header,
+    .print\:hidden {
+        display: none !important;
+    }
+
+    /* Ensure the print container is visible */
+    .print\:block {
+        display: block !important;
+    }
+
+    .print\:flex {
+        display: flex !important;
+    }
+
+    /* Hide all buttons in print */
+    button {
+        display: none !important;
+    }
+
+    /* Table adjustments */
+    table {
+        width: 100% !important;
+        border-collapse: collapse;
+        table-layout: fixed;
+        /* Keep fixed layout for consistent column widths */
+    }
+
+    th,
+    td {
+        border: 1px solid #000 !important;
+        /* Darker border for better visibility */
+        padding: 4px 6px !important;
+        /* Balanced padding */
+        text-align: left !important;
+        /* Force left alignment */
+        vertical-align: top !important;
+        /* Top alignment for multi-line content */
+        font-size: 9pt !important;
+        /* Consistent font size */
+        line-height: 1.3 !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Header specific styling to prevent overlap */
+    th {
+        font-weight: bold !important;
+        color: #000 !important;
+        white-space: normal !important;
+        /* Allow headers to wrap */
+        vertical-align: middle !important;
+        /* Center headers vertically */
+    }
+
+    /* Column widths for A4 optimization */
+    /* Checkbox (hidden in print usually, but if visible) */
+    th:first-child,
+    td:first-child {
+        width: 0px;
+        display: none;
+    }
+
+    /* Date */
+    th:nth-child(2),
+    td:nth-child(2) {
+        width: 10%;
+    }
+
+    /* Heure */
+    th:nth-child(3),
+    td:nth-child(3) {
+        width: 8%;
+    }
+
+    /* Interlocuteur */
+    th:nth-child(4),
+    td:nth-child(4) {
+        width: 18%;
+    }
+
+    /* Motif */
+    th:nth-child(5),
+    td:nth-child(5) {
+        width: 22%;
+    }
+
+    /* Lieu */
+    th:nth-child(6),
+    td:nth-child(6) {
+        width: 12%;
+    }
+
+    /* Statut */
+    th:nth-child(7),
+    td:nth-child(7) {
+        width: 10%;
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    /* Commentaires */
+    th:nth-child(8),
+    td:nth-child(8) {
+        width: 20%;
+    }
+
+    /* Header styling */
+    thead tr {
+        background-color: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Status badge styling for print */
+    span.rounded-full {
+        border: 1px solid #000;
+        padding: 2px 6px !important;
+        white-space: nowrap !important;
+        display: inline-block !important;
+        text-align: center !important;
+        font-size: 8pt !important;
+        border-radius: 10px !important;
+        background-color: transparent !important;
+        /* Clean look */
+        color: #000 !important;
+        font-weight: bold !important;
+    }
+
+    /* Hide actions column */
+    th:last-child,
+    td:last-child {
+        display: none !important;
+    }
+}
