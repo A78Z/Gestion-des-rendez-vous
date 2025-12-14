@@ -15,7 +15,7 @@ import {
 } from '@/lib/appointmentsBack4App';
 import { subscribeToAppointments, unsubscribeFromAppointments } from '@/lib/liveQueries';
 import { exportToPDF } from '@/lib/exportPDF';
-import * as XLSX from 'xlsx';
+import { exportToExcel } from '@/lib/exportExcel';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function SecretairePage() {
@@ -129,15 +129,12 @@ export default function SecretairePage() {
         }
     };
 
-    const handleExportExcel = (selectionOnly = false) => {
+    const handleExportExcel = async (selectionOnly = false) => {
         const dataToExport = selectionOnly && selectedIds.length > 0
             ? appointments.filter(a => selectedIds.includes(a.id))
             : appointments;
 
-        const ws = XLSX.utils.json_to_sheet(dataToExport);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Rendez-vous");
-        XLSX.writeFile(wb, selectionOnly ? "selection-rendez-vous.xlsx" : "rendez-vous-dg.xlsx");
+        await exportToExcel(dataToExport, selectionOnly ? "selection-rendez-vous.xlsx" : "rendez-vous-dg.xlsx");
     };
 
     const handleExportPDF = async (selectionOnly = false) => {
