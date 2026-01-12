@@ -11,10 +11,13 @@ export default function Navigation() {
     const pathname = usePathname();
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
+    const [mounted, setMounted] = useState(false);
 
+    // Re-fetch user whenever pathname changes (e.g., after login navigation)
     useEffect(() => {
         setUser(getCurrentUser());
-    }, []);
+        setMounted(true);
+    }, [pathname]);
 
     const handleLogout = async () => {
         try {
@@ -25,8 +28,8 @@ export default function Navigation() {
         }
     };
 
-    // Don't show navigation on login page
-    if (pathname === '/login') {
+    // Don't show navigation on login page or before mounting
+    if (pathname === '/login' || !mounted) {
         return null;
     }
 
@@ -40,8 +43,8 @@ export default function Navigation() {
                             <Link
                                 href="/secretaire"
                                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${pathname === '/secretaire'
-                                        ? 'bg-fdcuic-blue text-white'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                    ? 'bg-fdcuic-blue text-white'
+                                    : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
                                 Gestion des rendez-vous
@@ -52,8 +55,8 @@ export default function Navigation() {
                         <Link
                             href="/directeur"
                             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${pathname === '/directeur'
-                                    ? 'bg-fdcuic-blue text-white'
-                                    : 'text-gray-700 hover:bg-gray-100'
+                                ? 'bg-fdcuic-blue text-white'
+                                : 'text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
                             Tableau de bord DG
