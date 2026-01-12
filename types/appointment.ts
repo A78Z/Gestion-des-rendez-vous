@@ -1,4 +1,4 @@
-export type AppointmentStatus = 'Validé' | 'Confirmé' | 'En attente' | 'Annulé' | 'Reporté';
+export type AppointmentStatus = 'À valider' | 'Validé' | 'Confirmé' | 'En attente' | 'Annulé' | 'Reporté';
 
 export type UserRole = 'Secretary' | 'Director';
 
@@ -13,6 +13,7 @@ export interface Appointment {
     id: string;
     date: string;
     heure: string;
+    duree?: string;
     interlocuteur: string;
     motif: string;
     lieu: string;
@@ -26,6 +27,7 @@ export interface Appointment {
 export interface AppointmentFormData {
     date: string;
     heure: string;
+    duree?: string;
     interlocuteur: string;
     motif: string;
     lieu: string;

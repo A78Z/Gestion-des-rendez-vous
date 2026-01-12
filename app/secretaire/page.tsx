@@ -193,63 +193,77 @@ export default function SecretairePage() {
 
                 <main className="container mx-auto px-4 py-8">
                     {/* Actions Bar */}
-                    <div className="mb-6 flex flex-wrap gap-4 justify-center sm:justify-end print:hidden">
-                        {/* Standard Actions */}
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => handleExportPDF(false)}
-                                className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm"
-                            >
-                                <FileDown size={20} />
-                                <span>Exporter PDF</span>
-                            </button>
-                            <button
-                                onClick={() => handleExportExcel(false)}
-                                className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
-                            >
-                                <FileSpreadsheet size={20} />
-                                <span>Exporter Excel</span>
-                            </button>
-                        </div>
+                    <div className="mb-6 flex flex-wrap gap-4 justify-center sm:justify-between print:hidden">
+                        {/* Add Appointment Button - Prominent position */}
+                        <button
+                            onClick={() => {
+                                setEditingAppointment(null);
+                                setIsFormOpen(true);
+                            }}
+                            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-fdcuic-blue text-white rounded-lg hover:bg-fdcuic-lightblue transition-colors shadow-md font-semibold"
+                        >
+                            <Plus size={20} />
+                            <span>Ajouter un rendez-vous</span>
+                        </button>
 
-                        {/* Selection Actions */}
-                        {selectedIds.length > 0 && (
-                            <div className="flex gap-2 border-l pl-4 border-gray-300">
+                        <div className="flex flex-wrap gap-4">
+                            {/* Standard Actions */}
+                            <div className="flex gap-2">
                                 <button
-                                    onClick={() => handleExportPDF(true)}
-                                    className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 text-red-700 border border-red-200 rounded-lg hover:bg-red-200 transition-colors shadow-sm"
+                                    onClick={() => handleExportPDF(false)}
+                                    className="flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm"
                                 >
                                     <FileDown size={20} />
-                                    <span>PDF (Sélection)</span>
+                                    <span>Exporter PDF</span>
                                 </button>
                                 <button
-                                    onClick={() => handleExportExcel(true)}
-                                    className="flex items-center justify-center gap-2 px-4 py-2 bg-green-100 text-green-700 border border-green-200 rounded-lg hover:bg-green-200 transition-colors shadow-sm"
+                                    onClick={() => handleExportExcel(false)}
+                                    className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
                                 >
                                     <FileSpreadsheet size={20} />
-                                    <span>Excel (Sélection)</span>
+                                    <span>Exporter Excel</span>
                                 </button>
                             </div>
-                        )}
 
-                        <button
-                            onClick={async () => {
-                                if (confirm('Voulez-vous réparer les Rôles et Permissions ? Cela peut prendre quelques secondes.')) {
-                                    try {
-                                        setLoading(true);
-                                        const log = await fixRolesAndPermissions();
-                                        alert('Réparation terminée :\n' + log);
-                                    } catch (err: any) {
-                                        alert('Erreur : ' + err.message);
-                                    } finally {
-                                        setLoading(false);
+                            {/* Selection Actions */}
+                            {selectedIds.length > 0 && (
+                                <div className="flex gap-2 border-l pl-4 border-gray-300">
+                                    <button
+                                        onClick={() => handleExportPDF(true)}
+                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-red-100 text-red-700 border border-red-200 rounded-lg hover:bg-red-200 transition-colors shadow-sm"
+                                    >
+                                        <FileDown size={20} />
+                                        <span>PDF (Sélection)</span>
+                                    </button>
+                                    <button
+                                        onClick={() => handleExportExcel(true)}
+                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-green-100 text-green-700 border border-green-200 rounded-lg hover:bg-green-200 transition-colors shadow-sm"
+                                    >
+                                        <FileSpreadsheet size={20} />
+                                        <span>Excel (Sélection)</span>
+                                    </button>
+                                </div>
+                            )}
+
+                            <button
+                                onClick={async () => {
+                                    if (confirm('Voulez-vous réparer les Rôles et Permissions ? Cela peut prendre quelques secondes.')) {
+                                        try {
+                                            setLoading(true);
+                                            const log = await fixRolesAndPermissions();
+                                            alert('Réparation terminée :\n' + log);
+                                        } catch (err: any) {
+                                            alert('Erreur : ' + err.message);
+                                        } finally {
+                                            setLoading(false);
+                                        }
                                     }
-                                }
-                            }}
-                            className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors shadow-sm w-full sm:w-auto"
-                        >
-                            <span>Réparer Permissions (Complet)</span>
-                        </button>
+                                }}
+                                className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors shadow-sm w-full sm:w-auto"
+                            >
+                                <span>Réparer Permissions (Complet)</span>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Error Message */}

@@ -14,10 +14,11 @@ export default function AppointmentForm({ appointment, onSubmit, onCancel }: App
     const [formData, setFormData] = useState<AppointmentFormData>({
         date: '',
         heure: '',
+        duree: '',
         interlocuteur: '',
         motif: '',
         lieu: '',
-        statut: 'En attente',
+        statut: 'À valider',
         commentaires: '',
     });
 
@@ -26,6 +27,7 @@ export default function AppointmentForm({ appointment, onSubmit, onCancel }: App
             setFormData({
                 date: appointment.date,
                 heure: appointment.heure,
+                duree: appointment.duree || '',
                 interlocuteur: appointment.interlocuteur,
                 motif: appointment.motif,
                 lieu: appointment.lieu,
@@ -95,6 +97,22 @@ export default function AppointmentForm({ appointment, onSubmit, onCancel }: App
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-fdcuic-blue focus:border-transparent"
                             />
                         </div>
+
+                        {/* Durée (optionnel) */}
+                        <div>
+                            <label htmlFor="duree" className="block text-sm font-semibold text-gray-700 mb-1">
+                                Durée
+                            </label>
+                            <input
+                                type="text"
+                                id="duree"
+                                name="duree"
+                                value={formData.duree || ''}
+                                onChange={handleChange}
+                                placeholder="Ex: 1h, 30min"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-fdcuic-blue focus:border-transparent"
+                            />
+                        </div>
                     </div>
 
                     {/* Interlocuteur */}
@@ -161,6 +179,7 @@ export default function AppointmentForm({ appointment, onSubmit, onCancel }: App
                             required
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-fdcuic-blue focus:border-transparent"
                         >
+                            <option value="À valider">À valider</option>
                             <option value="Validé">Validé</option>
                             <option value="Confirmé">Confirmé</option>
                             <option value="En attente">En attente</option>
