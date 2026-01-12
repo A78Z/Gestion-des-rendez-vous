@@ -16,31 +16,39 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const checkAuth = () => {
-            // Check if user is authenticated
-            if (!isAuthenticated()) {
-                router.push('/login');
-                return;
-            }
+        const checkAuth = async () => {
+            // Small delay to ensure Parse SDK session is loaded
+            await new Promise(resolve => setTimeout(resolve, 50));
 
-            // If a specific role is required, check it
-            if (requiredRole) {
+            try {
+                // Check if user is authenticated
+                if (!isAuthenticated()) {
+                    router.replace('/login');
+                    return;
+                }
+
                 const user = getCurrentUser();
-                if (!user || user.role !== requiredRole) {
+
+                // If a specific role is required, check it
+                if (requiredRole && user?.role !== requiredRole) {
                     // Redirect to appropriate page based on user's actual role
                     if (user?.role === 'Secretary') {
-                        router.push('/secretaire');
+                        router.replace('/secretaire');
                     } else if (user?.role === 'Director') {
-                        router.push('/directeur');
+                        router.replace('/directeur');
                     } else {
-                        router.push('/login');
+                        router.replace('/login');
                     }
                     return;
                 }
-            }
 
-            setAuthorized(true);
-            setLoading(false);
+                setAuthorized(true);
+            } catch (error) {
+                console.error('Auth check error:', error);
+                router.replace('/login');
+            } finally {
+                setLoading(false);
+            }
         };
 
         checkAuth();
@@ -48,7 +56,7 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fdcuic-blue mx-auto mb-4"></div>
                     <p className="text-gray-600">Vérification...</p>
@@ -58,8 +66,16 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
     }
 
     if (!authorized) {
-        return null;
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fdcuic-blue mx-auto mb-4"></div>
+                    <p className="text-gray-600">Redirection...</p>
+                </div>
+            </div>
+        );
     }
 
     return <>{children}</>;
 }
+
