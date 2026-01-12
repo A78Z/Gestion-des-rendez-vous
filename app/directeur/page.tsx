@@ -22,7 +22,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function DirecteurPage() {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
-    const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'upcoming' | 'past'>('today');
+    const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'upcoming' | 'past'>('all');
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
@@ -127,7 +127,7 @@ export default function DirecteurPage() {
         total: sortedAppointments.length,
         validated: sortedAppointments.filter(a => a.statut === 'Validé').length,
         confirmed: sortedAppointments.filter(a => a.statut === 'Confirmé').length,
-        pending: sortedAppointments.filter(a => a.statut === 'En attente').length,
+        pending: sortedAppointments.filter(a => a.statut === 'En attente' || a.statut === 'À valider').length,
         cancelled: sortedAppointments.filter(a => a.statut === 'Annulé').length,
         postponed: sortedAppointments.filter(a => a.statut === 'Reporté').length,
     };
@@ -183,7 +183,7 @@ export default function DirecteurPage() {
                         <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-500">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-500">En attente</p>
+                                    <p className="text-sm text-gray-500">À valider</p>
                                     <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
                                 </div>
                                 <Clock className="text-yellow-400" size={24} />

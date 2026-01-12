@@ -1,16 +1,11 @@
-/**
- * Script d'import des rendez-vous du DG
- * À exécuter avec: node scripts/import-appointments.cjs
- */
-
 const Parse = require('parse/node');
 
-// Initialize Parse
-Parse.initialize(
-    process.env.PARSE_APP_ID || 'NnQP2PMl2U9O2u82xzZC8HN0qQQWnRLK8HgUXmle',
-    process.env.PARSE_JS_KEY || 'FN6llR4kRJv0MACz75FTNVIQoZvEMNrwkKmRdOLe'
-);
-Parse.serverURL = process.env.PARSE_SERVER_URL || 'https://parseapi.back4app.com';
+const APP_ID = 'UbyWcLeLBxA1epUIaDcskv3PVNOo9xeJLeXCxiwA';
+const JS_KEY = 'ZuL9GI5YOrkjxW3sZM0pze7GUs07fvTpoo2XDChn';
+const SERVER_URL = 'https://parseapi.back4app.com';
+
+Parse.initialize(APP_ID, JS_KEY);
+Parse.serverURL = SERVER_URL;
 
 // Données des rendez-vous à importer (à partir de novembre)
 const appointmentsToImport = [
@@ -93,7 +88,7 @@ const appointmentsToImport = [
         motif: 'Audience',
         lieu: 'FDCUIC',
         statut: 'À valider',
-        commentaires: 'Date à confirmer'
+        commentaires: 'Date exacte à confirmer'
     },
 
     // Mercredi 07 janvier 2026 - Annulé
@@ -107,7 +102,7 @@ const appointmentsToImport = [
         commentaires: 'Rendez-vous annulé'
     },
 
-    // Jeudi 08 janvier 2026 (corrigé - le 07 janvier 2026 est un mercredi)
+    // Jeudi 08 janvier 2026 (le 07 janvier 2026 est un mercredi, donc le jeudi suivant = 08)
     {
         date: '2026-01-08',
         heure: '16:00',
@@ -143,11 +138,23 @@ const appointmentsToImport = [
 ];
 
 async function importAppointments() {
+    console.log('🔐 Connexion en tant que Secrétaire...');
+
+    try {
+        // Se connecter en tant que secrétaire
+        await Parse.User.logIn('secretaire', 'Secret@123');
+        console.log('✅ Connecté en tant que Secrétaire\n');
+    } catch (error) {
+        console.error('❌ Erreur de connexion:', error.message);
+        process.exit(1);
+    }
+
     console.log('🚀 Démarrage de l\'import des rendez-vous...\n');
 
     const Appointment = Parse.Object.extend('Appointment');
     let successCount = 0;
     let errorCount = 0;
+    let skipCount = 0;
 
     for (const data of appointmentsToImport) {
         try {
@@ -155,12 +162,15 @@ async function importAppointments() {
             const query = new Parse.Query(Appointment);
             query.equalTo('date', data.date);
             query.equalTo('heure', data.heure);
-            query.equalTo('interlocuteur', data.interlocuteur);
+            if (data.interlocuteur) {
+                query.equalTo('interlocuteur', data.interlocuteur);
+            }
 
             const existing = await query.first();
 
             if (existing) {
-                console.log(`⏭️  Doublon ignoré: ${data.date} ${data.heure} - ${data.interlocuteur}`);
+                console.log(`⏭️  Doublon ignoré: ${data.date} ${data.heure} - ${data.interlocuteur || '(sans interlocuteur)'}`);
+                skipCount++;
                 continue;
             }
 
@@ -182,10 +192,14 @@ async function importAppointments() {
             const acl = new Parse.ACL();
             acl.setPublicReadAccess(true);
             acl.setRoleWriteAccess('Secretary', true);
-            acl.setRoleWriteAccess('Secretaire', true);
             acl.setRoleWriteAccess('Director', true);
-            acl.setRoleWriteAccess('Directeur', true);
-            acl.setRoleWriteAccess('Admin', true);
+
+            // Also give the current user write access
+            const currentUser = Parse.User.current();
+            if (currentUser) {
+                acl.setWriteAccess(currentUser.id, true);
+            }
+
             appointment.setACL(acl);
 
             await appointment.save();
@@ -197,8 +211,12 @@ async function importAppointments() {
         }
     }
 
+    // Déconnexion
+    await Parse.User.logOut();
+
     console.log('\n📊 Résumé de l\'import:');
     console.log(`   ✅ ${successCount} rendez-vous importés`);
+    console.log(`   ⏭️  ${skipCount} doublons ignorés`);
     console.log(`   ❌ ${errorCount} erreurs`);
     console.log(`   📅 Total traités: ${appointmentsToImport.length}`);
 }
